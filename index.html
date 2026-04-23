@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI in Medicine Lab | Faezeh Rohani, PhD</title>
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='10' fill='%230a2540'/%3E%3Crect x='18' y='18' width='84' height='84' rx='4' fill='%23ffffff'/%3E%3Cpath d='M34 84V36h12v48H34Zm18 0V52c0-12 7-18 18-18s18 7 18 20v30H76V55c0-7-3-10-8-10s-8 4-8 10v29H52Z' fill='%230a2540'/%3E%3Cpath d='M25 67h18l9-17 11 30 10-40 11 27h11' fill='none' stroke='%23163a5c' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <style>
+        :root {
+            --navy: #0a2540;
+            --navy-soft: #163a5c;
+            --ink: #0a2540;
+            --muted: #42627f;
+            --line: #dbe8f4;
+            --bg: #ffffff;
+            --card: #ffffff;
+            --accent: #0a2540;
+            --accent-soft: #eef6ff;
+            --shadow: rgba(10, 37, 64, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+        }
+
+        a {
+            color: var(--navy);
+            text-decoration-color: rgba(10, 37, 64, 0.35);
+            text-underline-offset: 4px;
+        }
+
+        a:hover,
+        a:focus {
+            color: var(--navy-soft);
+            text-decoration-color: var(--navy-soft);
+        }
+
+        img,
+        svg {
+            max-width: 100%;
+            display: block;
+        }
+
+        .container {
+            width: min(1160px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.94);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(12px);
+        }
+
+        .nav-shell {
+            min-height: 82px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 240px;
+            color: var(--navy);
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            width: 50px;
+            height: 50px;
+            flex: 0 0 50px;
+            border: 1px solid var(--line);
+            background: var(--accent-soft);
+            border-radius: 4px;
+            padding: 6px;
+        }
+
+        .brand-title {
+            display: block;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 1.14rem;
+            line-height: 1.15;
+            font-weight: 700;
+        }
+
+        .brand-subtitle {
+            display: block;
+            color: var(--muted);
+            font-size: 0.76rem;
+            letter-spacing: 0;
+            line-height: 1.2;
+            margin-top: 4px;
+        }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .menu-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 42px;
+            padding: 9px 13px;
+            border: 1px solid var(--navy);
+            border-radius: 4px;
+            background: #ffffff;
+            color: var(--navy);
+            cursor: pointer;
+            font: 700 0.76rem/1 Arial, Helvetica, sans-serif;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .menu-toggle-lines {
+            width: 18px;
+            height: 12px;
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-toggle-lines span {
+            display: block;
+            height: 2px;
+            background: var(--navy);
+            border-radius: 2px;
+        }
+
+        .menu-toggle:hover,
+        .menu-toggle:focus {
+            background: var(--accent-soft);
+            outline: none;
+        }
+
+        .nav-link {
+            border: 0;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            font: 700 0.76rem/1 Arial, Helvetica, sans-serif;
+            letter-spacing: 0.08em;
+            padding: 13px 12px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .nav-link:hover,
+        .nav-link:focus,
+        .nav-link.active {
+            background: var(--accent-soft);
+            color: var(--navy);
+            outline: none;
+        }
+
+        .page {
+            display: none;
+            min-height: 62vh;
+            padding: 64px 0 76px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .hero {
+            position: relative;
+            padding: 70px 0 50px;
+            overflow: hidden;
+            border-bottom: 1px solid var(--line);
+            background:
+                linear-gradient(90deg, rgba(238, 246, 255, 0.84) 0, rgba(255, 255, 255, 0.92) 36%, rgba(255, 255, 255, 1) 100%),
+                repeating-linear-gradient(0deg, transparent 0, transparent 39px, rgba(219, 232, 244, 0.54) 40px),
+                repeating-linear-gradient(90deg, transparent 0, transparent 39px, rgba(219, 232, 244, 0.54) 40px);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+            gap: 46px;
+            align-items: center;
+        }
+
+        .eyebrow {
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            margin: 0 0 14px;
+            text-transform: uppercase;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: var(--navy);
+            font-family: Georgia, "Times New Roman", serif;
+            line-height: 1.18;
+            margin: 0;
+            letter-spacing: 0;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 7vw, 5.1rem);
+            max-width: 780px;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4.2vw, 3.1rem);
+            margin-bottom: 14px;
+        }
+
+        h3 {
+            font-size: 1.35rem;
+            margin-bottom: 10px;
+        }
+
+        h4 {
+            font-size: 1.02rem;
+            margin-bottom: 5px;
+        }
+
+        .hero-lede {
+            color: var(--navy-soft);
+            font-size: 1.14rem;
+            max-width: 760px;
+            margin: 22px 0 0;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 11px 17px;
+            border: 1px solid var(--navy);
+            border-radius: 4px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .button.primary {
+            background: var(--navy);
+            color: #ffffff;
+        }
+
+        .button.primary:hover,
+        .button.primary:focus {
+            background: var(--navy-soft);
+            color: #ffffff;
+        }
+
+        .button.secondary {
+            background: #ffffff;
+            color: var(--navy);
+        }
+
+        .button.secondary:hover,
+        .button.secondary:focus {
+            background: var(--accent-soft);
+        }
+
+        .portrait-card,
+        .card,
+        .member-card,
+        .project-card,
+        .event-card,
+        .contact-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 4px;
+        }
+
+        .portrait-card {
+            padding: 16px;
+            box-shadow: 0 18px 40px var(--shadow);
+        }
+
+        .portrait {
+            min-height: 360px;
+            aspect-ratio: 3 / 2;
+            border: 1px solid var(--line);
+            background: var(--accent-soft);
+            display: grid;
+            grid-template-columns: 0.86fr 1.14fr;
+            overflow: hidden;
+        }
+
+        .portrait-panel {
+            display: grid;
+            place-items: center;
+            background: var(--navy);
+            color: #ffffff;
+            padding: 0;
+        }
+
+        .portrait-image {
+            width: 100%;
+            height: 100%;
+            min-height: 360px;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        .portrait-copy {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 28px;
+            background:
+                linear-gradient(180deg, rgba(238, 246, 255, 0.9), rgba(255, 255, 255, 1)),
+                repeating-linear-gradient(0deg, transparent 0, transparent 31px, rgba(219, 232, 244, 0.6) 32px);
+        }
+
+        .portrait-copy strong {
+            display: block;
+            font-family: Georgia, "Times New Roman", serif;
+            color: var(--navy);
+            font-size: 1.35rem;
+            line-height: 1.25;
+            margin-bottom: 10px;
+        }
+
+        .portrait-copy span {
+            color: var(--muted);
+            font-size: 0.94rem;
+        }
+
+        .caption {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin: 12px 0 0;
+        }
+
+        .fact-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            margin-top: 42px;
+            border: 1px solid var(--line);
+            background: #ffffff;
+        }
+
+        .fact {
+            padding: 21px 22px;
+            border-right: 1px solid var(--line);
+        }
+
+        .fact:last-child {
+            border-right: 0;
+        }
+
+        .fact span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .fact strong {
+            display: block;
+            color: var(--navy);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 1.08rem;
+            line-height: 1.3;
+            margin-top: 7px;
+        }
+
+        .section-head {
+            max-width: 820px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .section-head p {
+            color: var(--muted);
+            margin: 8px 0 0;
+        }
+
+        .grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        .grid.two {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid.three {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .card,
+        .member-card,
+        .project-card,
+        .event-card,
+        .contact-card {
+            padding: 24px;
+        }
+
+        .card p,
+        .member-card p,
+        .project-card p,
+        .event-card p,
+        .contact-card p {
+            color: var(--muted);
+            margin: 7px 0 0;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 17px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            min-height: 30px;
+            padding: 5px 10px;
+            background: var(--accent-soft);
+            color: var(--navy);
+            border-radius: 4px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .clean-list {
+            list-style: none;
+            margin: 14px 0 0;
+            padding: 0;
+        }
+
+        .clean-list li {
+            position: relative;
+            padding-left: 18px;
+            margin: 8px 0;
+            color: var(--muted);
+        }
+
+        .clean-list li::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            position: absolute;
+            top: 0.68em;
+            left: 0;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        .member-card {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .avatar {
+            flex: 0 0 54px;
+            width: 54px;
+            height: 54px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--line);
+            background: var(--accent-soft);
+            color: var(--navy);
+            border-radius: 4px;
+            font-family: Georgia, "Times New Roman", serif;
+            font-weight: 700;
+        }
+
+        .member-photo {
+            flex: 0 0 82px;
+            width: 82px;
+            height: 92px;
+            object-fit: cover;
+            object-position: center top;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            background: var(--accent-soft);
+        }
+
+        .member-photo.walid-photo {
+            object-position: center 62%;
+        }
+
+        .role {
+            color: var(--muted);
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin: 2px 0 0;
+        }
+
+        .lab-line {
+            color: var(--muted);
+            font-size: 0.86rem;
+            margin-top: 3px;
+        }
+
+        .page-band {
+            padding: 42px 0;
+            border-top: 1px solid var(--line);
+        }
+
+        .page-band:first-of-type {
+            border-top: 0;
+            padding-top: 0;
+        }
+
+        .split {
+            display: grid;
+            grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+            gap: 26px;
+            align-items: start;
+        }
+
+        .mini-title {
+            margin: 0 0 13px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 0 0 22px;
+        }
+
+        .filter-button {
+            min-height: 38px;
+            border: 1px solid var(--navy);
+            border-radius: 4px;
+            background: #ffffff;
+            color: var(--navy);
+            cursor: pointer;
+            font-weight: 700;
+            padding: 8px 14px;
+        }
+
+        .filter-button.active,
+        .filter-button:hover,
+        .filter-button:focus {
+            background: var(--navy);
+            color: #ffffff;
+            outline: none;
+        }
+
+        .event-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .event-meta span {
+            display: inline-flex;
+            align-items: center;
+            min-height: 28px;
+            padding: 4px 9px;
+            border: 1px solid var(--line);
+            background: var(--accent-soft);
+            color: var(--navy);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .publication-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .publication {
+            padding: 20px;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            background: #ffffff;
+        }
+
+        .publication strong {
+            color: var(--navy);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 1.08rem;
+        }
+
+        .publication span {
+            display: block;
+            color: var(--muted);
+            margin-top: 7px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .contact-card a {
+            font-weight: 700;
+        }
+
+        .footer {
+            background: var(--navy);
+            color: #ffffff;
+            padding: 32px 0;
+        }
+
+        .footer-grid {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer a {
+            color: #ffffff;
+            text-decoration-color: rgba(255, 255, 255, 0.45);
+        }
+
+        .footer p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.84);
+        }
+
+        .empty-state {
+            display: none;
+            color: var(--muted);
+            border: 1px solid var(--line);
+            padding: 20px;
+            border-radius: 4px;
+            background: var(--accent-soft);
+        }
+
+        @media (max-width: 920px) {
+
+            .hero-grid,
+            .grid.two,
+            .grid.three,
+            .split,
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .fact-strip {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .fact:nth-child(2) {
+                border-right: 0;
+            }
+
+            .fact:nth-child(1),
+            .fact:nth-child(2) {
+                border-bottom: 1px solid var(--line);
+            }
+        }
+
+        @media (max-width: 680px) {
+            .container {
+                width: min(100% - 28px, 1160px);
+            }
+
+            .site-header {
+                position: static;
+            }
+
+            .nav-shell {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                align-items: center;
+                gap: 12px;
+                padding: 16px 0;
+            }
+
+            .brand {
+                min-width: 0;
+            }
+
+            .brand-mark {
+                width: 44px;
+                height: 44px;
+                flex-basis: 44px;
+            }
+
+            .brand-title {
+                font-size: 1rem;
+            }
+
+            .menu-toggle {
+                display: inline-flex;
+            }
+
+            .main-nav {
+                grid-column: 1 / -1;
+                display: none;
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: flex-start;
+                gap: 0;
+                width: 100%;
+                padding: 8px;
+                border: 1px solid var(--line);
+                border-radius: 4px;
+                background: #ffffff;
+            }
+
+            .main-nav.open {
+                display: flex;
+            }
+
+            .main-nav .nav-link {
+                width: 100%;
+                min-height: 42px;
+                display: flex;
+                align-items: center;
+                padding: 12px 11px;
+                border-radius: 4px;
+            }
+
+            .main-nav .nav-link+.nav-link {
+                border-top: 1px solid var(--line);
+            }
+
+            .hero {
+                padding: 46px 0 36px;
+            }
+
+            .page {
+                padding: 46px 0 58px;
+            }
+
+            .portrait {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+
+            .portrait-panel {
+                min-height: 180px;
+            }
+
+            .fact-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .fact {
+                border-right: 0;
+                border-bottom: 1px solid var(--line);
+            }
+
+            .fact:last-child {
+                border-bottom: 0;
+            }
+
+            .card,
+            .member-card,
+            .project-card,
+            .event-card,
+            .contact-card {
+                padding: 19px;
+            }
+
+            .member-card {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container nav-shell">
+            <a class="brand" href="#home" aria-label="AI in Medicine Lab home">
+                <svg class="brand-mark" viewBox="0 0 120 120" role="img" aria-label="AI in Medicine Lab mark">
+                    <rect x="12" y="12" width="96" height="96" fill="#ffffff" stroke="#0a2540" stroke-width="5"></rect>
+                    <path
+                        d="M32 84V36h12v48H32Zm18 0V52c0-12 7-18 18-18s18 7 18 20v30H74V55c0-7-3-10-8-10s-8 4-8 10v29H50Z"
+                        fill="#0a2540"></path>
+                    <path d="M26 67h18l9-17 11 30 10-40 11 27h11" fill="none" stroke="#163a5c" stroke-width="6"
+                        stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <span>
+                    <span class="brand-title">AI in Medicine Lab</span>
+                    <span class="brand-subtitle">Üsküdar University</span>
+                </span>
+            </a>
+
+            <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">
+                <span class="menu-toggle-lines" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+                Menu
+            </button>
+
+            <nav class="main-nav" id="primary-nav" aria-label="Primary navigation">
+                <a class="nav-link active" href="#home" data-page-link="home">Home</a>
+                <a class="nav-link" href="#team" data-page-link="team">Team</a>
+                <a class="nav-link" href="#summer-school" data-page-link="summer-school">AI Summer School</a>
+                <a class="nav-link" href="#podcast" data-page-link="podcast">HexAI Podcast</a>
+                <a class="nav-link" href="#research" data-page-link="research">Research</a>
+                <a class="nav-link" href="#publications" data-page-link="publications">Publications</a>
+                <a class="nav-link" href="#events" data-page-link="events">Events</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="page active" aria-labelledby="home-title">
+            <div class="hero">
+                <div class="container">
+                    <div class="hero-grid">
+                        <div>
+                            <p class="eyebrow">AI in Medicine Innovation Research Laboratory</p>
+                            <h1 id="home-title">Faezeh Rohani, PhD</h1>
+                            <p class="hero-lede">Director of the AI in Medicine Innovation Research Laboratory at
+                                Üsküdar University, advancing responsible artificial intelligence, clinical decision
+                                support, and health data science for patient-centered care.</p>
+                            <div class="button-row">
+                                <a class="button primary" href="#research">View Research</a>
+                                <a class="button secondary"
+                                    href="https://scholar.google.com/citations?user=1BLypHQAAAAJ&amp;hl=en"
+                                    target="_blank" rel="noopener">Google Scholar</a>
+                                <a class="button secondary" href="https://www.linkedin.com/in/faezeh-r-17a0375a/"
+                                    target="_blank" rel="noopener">LinkedIn</a>
+                            </div>
+                        </div>
+
+                        <aside class="portrait-card" aria-label="Academic profile summary">
+                            <div class="portrait">
+                                <div class="portrait-panel">
+                                    <img class="portrait-image" src="assets/faezeh-rohani.jpg"
+                                        alt="Faezeh Rohani, PhD at Üsküdar University">
+                                </div>
+                                <div class="portrait-copy">
+                                    <strong>Health Explainable AI</strong>
+                                    <span>Clinical AI research, medical imaging, biomedical signals, education, and
+                                        translational health informatics.</span>
+                                </div>
+                            </div>
+                            <p class="caption">Faezeh Rohani, PhD, AI in Medicine Innovation Research Laboratory.</p>
+                        </aside>
+                    </div>
+
+                    <div class="fact-strip" aria-label="Quick facts">
+                        <div class="fact">
+                            <span>Institution</span>
+                            <strong>Üsküdar University</strong>
+                        </div>
+                        <div class="fact">
+                            <span>Laboratory</span>
+                            <strong>AI in Medicine Innovation Research Laboratory</strong>
+                        </div>
+                        <div class="fact">
+                            <span>Focus</span>
+                            <strong>Explainable AI for healthcare</strong>
+                        </div>
+                        <div class="fact">
+                            <span>Location</span>
+                            <strong>Üsküdar, Istanbul, Türkiye</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container page-band">
+                <div class="split">
+                    <div class="section-head">
+                        <p class="eyebrow">Profile</p>
+                        <h2>About Faezeh Rohani, PhD</h2>
+                        <p>This section is prepared as editable placeholder copy, based on the structure you provided.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <p>I am an academic researcher focused on artificial intelligence in medicine, health data
+                            science, and clinically meaningful innovation. My work centers on developing trustworthy AI
+                            methods that can support diagnosis, prognosis, clinical validation, and better
+                            decision-making across multiple healthcare data sources.</p>
+                        <p>I collaborate with researchers, clinicians, students, and software developers to turn
+                            computational methods into usable research systems. The lab welcomes interdisciplinary work
+                            across explainable AI, medical imaging, biomedical signal processing, mental health
+                            informatics, and education in AI-powered healthcare.</p>
+                        <div class="tag-row" aria-label="Research tags">
+                            <span class="tag">AI in Medicine</span>
+                            <span class="tag">Health Informatics</span>
+                            <span class="tag">Clinical Validation</span>
+                            <span class="tag">Explainable AI</span>
+                            <span class="tag">Medical Imaging</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container page-band">
+                <div class="grid three">
+                    <article class="contact-card">
+                        <p class="mini-title">Scholarship</p>
+                        <h3>Google Scholar</h3>
+                        <p><a href="https://scholar.google.com/citations?user=1BLypHQAAAAJ&amp;hl=en" target="_blank"
+                                rel="noopener">Open publication profile</a></p>
+                    </article>
+                    <article class="contact-card">
+                        <p class="mini-title">Professional Network</p>
+                        <h3>LinkedIn</h3>
+                        <p><a href="https://www.linkedin.com/in/faezeh-r-17a0375a/" target="_blank"
+                                rel="noopener">Connect on LinkedIn</a></p>
+                    </article>
+                    <article class="contact-card">
+                        <p class="mini-title">Contact</p>
+                        <h3>Email</h3>
+                        <p>faezeh@rohani@uskudar.edu.tr</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="team" class="page" aria-labelledby="team-title">
+            <div class="container">
+                <div class="section-head">
+                    <p class="eyebrow">People</p>
+                    <h2 id="team-title">Team Members</h2>
+                    <p>Leadership, faculty collaborators, students, research assistants, and project contributors in the
+                        AI in Medicine Innovation Research Laboratory.</p>
+                </div>
+
+                <div class="page-band">
+                    <p class="mini-title">Leadership</p>
+                    <div class="grid two">
+                        <article class="member-card">
+                            <img class="member-photo" src="assets/faezeh-rohani.jpg" alt="Faezeh Rohani, PhD">
+                            <div>
+                                <h3>Faezeh Rohani, PhD</h3>
+                                <p class="role">Director</p>
+                                <div class="lab-line">AI in Medicine Innovation Research Laboratory</div>
+                            </div>
+                        </article>
+                        <article class="member-card">
+                            <div class="avatar">AM</div>
+                            <div>
+                                <h3>Andreas Müller, PhD</h3>
+                                <p class="role">Clinical Validation Lead</p>
+                                <div class="lab-line">AI in Medicine Innovation Research Laboratory</div>
+                            </div>
+                        </article>
+                        <article class="member-card">
+                            <img class="member-photo" src="assets/Iman.JPG" alt="SayedIman Mostafavi">
+                            <div>
+                                <h3>SayedIman Mostafavi</h3>
+                                <p class="role">Podcast Lead</p>
+                                <div class="lab-line">AI in Medicine Innovation Research Laboratory</div>
+                            </div>
+                        </article>
+                        <article class="member-card">
+                            <img class="member-photo walid-photo" src="assets/walid.PNG" alt="Waleed B.s">
+                            <div>
+                                <h3>Waleed</h3>
+                                <p class="role">GitHub Lead</p>
+                                <div class="lab-line">AI in Medicine Innovation Research Laboratory</div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="page-band">
+                    <p class="mini-title">Academic Advisory Board and Faculty Members</p>
+                    <div class="grid two">
+                        <article class="member-card">
+                            <img class="member-photo" src="assets/ahmad-tafti.jpg" alt="Ahmad P. Tafti, PhD, FAMIA">
+                            <div>
+                                <h3>Ahmad P. Tafti, PhD, FAMIA</h3>
+                                <p class="role">University of Pittsburgh</p>
+                                <div class="lab-line">Faculty Member and Academic Advisor</div>
+                                <ul class="clean-list">
+                                    <li><a href="https://aptafti.github.io/index.html" target="_blank"
+                                            rel="noopener">About Ahmad P. Tafti, PhD, FAMIA</a></li>
+                                    <li><a href="https://scholar.google.com/citations?user=NxeXUqwAAAAJ&amp;hl=en"
+                                            target="_blank" rel="noopener">Google Scholar</a></li>
+                                    <li><a href="https://www.linkedin.com/in/ahmadtafti" target="_blank"
+                                            rel="noopener">LinkedIn</a></li>
+                                </ul>
+                            </div>
+                        </article>
+                        <article class="member-card">
+                            <img class="member-photo" src="assets/Turker.png" alt="Dr Turker">
+                            <div>
+                                <h3>Dr Turker</h3>
+                                <p class="role">Academic Advisory Board</p>
+                                <div class="lab-line">Üsküdar University</div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="page-band">
+                    <p class="mini-title">Student Members and Development</p>
+                    <div class="grid three">
+                        <article class="card">
+                            <p class="mini-title">PhD Students</p>
+                            <ul class="clean-list">
+                                <li>Graduate PhD students to be added</li>
+                            </ul>
+                        </article>
+                        <article class="member-card">
+                            <img class="member-photo" src="assets/Aniq.JPG" alt="Aneek">
+                            <div>
+                                <h3>Aniq Tariq</h3>
+                                <p class="role">Master Student</p>
+                                <div class="lab-line">AI in Medicine Innovation Research Laboratory</div>
+                            </div>
+                        </article>
+                        <article class="member-card">
+                            <img class="member-photo" src="assets/Nadia.JPG" alt="Nadia Ashraf">
+                            <div>
+                                <h3>Nadia Ashraf</h3>
+                                <p class="role">Master Student</p>
+                                <div class="lab-line">AI in Medicine Innovation Research Laboratory</div>
+                            </div>
+                        </article>
+                        <article class="member-card">
+                            <img class="member-photo" src="assets/Abdul_Rehman.JPG" alt="Abdul Rehman">
+                            <div>
+                                <h3>Abdul Rehman</h3>
+                                <p class="role">Master Student</p>
+                                <div class="lab-line">AI in Medicine Innovation Research Laboratory</div>
+                            </div>
+                        </article>
+                        <article class="member-card">
+                            <img class="member-photo" src="assets/Yonesi.JPG" alt="Yonesi Amirmoezz">
+                            <div>
+                                <h3>Yonesi Amirmoezz</h3>
+                                <p class="role">Master Student</p>
+                                <div class="lab-line">AI in Medicine Innovation Research Laboratory</div>
+                            </div>
+                        </article>
+                        <article class="card">
+                            <p class="mini-title">Additional Master Students</p>
+                            <ul class="clean-list">
+                                <li>Saman Saman</li>
+                                <li>Aleyna</li>
+                                <li>Amir</li>
+                                <li>Fatih</li>
+                            </ul>
+                        </article>
+                        <article class="card">
+                            <p class="mini-title">Research and Development</p>
+                            <ul class="clean-list">
+                                <li>Research Assistants</li>
+                                <li>Clinical Validation</li>
+                                <li>Software Developer: Waleed</li>
+                                <li>Lab Podcast Hosts</li>
+                                <li>Graduation students</li>
+                            </ul>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="page-band">
+                    <p class="mini-title">Former Members and Project Team</p>
+                    <div class="grid three">
+                        <article class="member-card">
+                            <img class="member-photo" src="assets/Hekmat.JPG" alt="Hekmat">
+                            <div>
+                                <h3>Hekmat</h3>
+                                <p class="role">Project Team</p>
+                                <div class="lab-line">AI in Medicine Innovation Research Laboratory</div>
+                            </div>
+                        </article>
+                        <article class="card">
+                            <p class="mini-title">Project Contributors</p>
+                            <div class="tag-row">
+                                <span class="tag">SayedIman Mostafavi</span>
+                                <span class="tag">Waleed</span>
+                                <span class="tag">Payam Fakhr Ebrahimi</span>
+                                <span class="tag">Shahir</span>
+                                <span class="tag">Salmon</span>
+                                <span class="tag">Nur</span>
+                                <span class="tag">Mohammad</span>
+                                <span class="tag">Hassan</span>
+                                <span class="tag">Farnaz</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="summer-school" class="page" aria-labelledby="summer-title">
+            <div class="container">
+                <div class="section-head">
+                    <p class="eyebrow">Education</p>
+                    <h2 id="summer-title">AI Summer School</h2>
+                    <p>A focused learning program for students, clinicians, and early-career researchers who want
+                        practical foundations in AI for medicine.</p>
+                </div>
+
+                <div class="grid three">
+                    <article class="project-card">
+                        <h3>Foundations of Medical AI</h3>
+                        <p>Core concepts in supervised learning, deep learning, model evaluation, bias, privacy, and
+                            clinical deployment.</p>
+                    </article>
+                    <article class="project-card">
+                        <h3>Hands-on Health Data</h3>
+                        <p>Practical sessions for structured clinical data, biomedical signals, imaging workflows, and
+                            reproducible notebooks.</p>
+                    </article>
+                    <article class="project-card">
+                        <h3>Responsible Innovation</h3>
+                        <p>Workshops on explainability, human-centered validation, ethics, and translating research
+                            prototypes into clinical insight.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="podcast" class="page" aria-labelledby="podcast-title">
+            <div class="container">
+                <div class="section-head">
+                    <p class="eyebrow">HexAI Podcast</p>
+                    <h2 id="podcast-title">Podcasts</h2>
+                    <p>Conversations with researchers, clinicians, engineers, and students about artificial
+                        intelligence, medicine, and responsible innovation.</p>
+                </div>
+
+                <div class="grid two">
+                    <article class="project-card">
+                        <h3>Clinical AI in Practice</h3>
+                        <p>Episode placeholder for discussing what makes an AI system clinically useful, measurable, and
+                            trustworthy.</p>
+                        <div class="tag-row">
+                            <span class="tag">Podcast Lead: SayedIman Mostafavi</span>
+                            <span class="tag">Coming Soon</span>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <h3>Students in Health AI</h3>
+                        <p>Episode placeholder for student research stories, lab projects, and lessons learned while
+                            building medical AI tools.</p>
+                        <div class="tag-row">
+                            <span class="tag">Interview</span>
+                            <span class="tag">Education</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="research" class="page" aria-labelledby="research-title">
+            <div class="container">
+                <div class="section-head">
+                    <p class="eyebrow">Research Projects</p>
+                    <h2 id="research-title">Projects</h2>
+                    <p>Project cards can be expanded with details, collaborators, funding, datasets, publications, and
+                        live demos as the laboratory portfolio grows.</p>
+                </div>
+
+                <div class="grid three">
+                    <article class="project-card">
+                        <h3>Explainable AI for Clinical Decision Support</h3>
+                        <p>Developing interpretable models that help clinicians understand risk, uncertainty, and
+                            evidence behind AI-supported recommendations.</p>
+                        <div class="tag-row">
+                            <span class="tag">XAI</span>
+                            <span class="tag">Clinical AI</span>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <h3>Medical Imaging and Diagnostic Intelligence</h3>
+                        <p>Building machine learning methods for imaging informatics, annotation workflows, and
+                            validation of diagnostic performance.</p>
+                        <div class="tag-row">
+                            <span class="tag">Imaging</span>
+                            <span class="tag">Validation</span>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <h3>Biomedical Signal and Mental Health Analytics</h3>
+                        <p>Studying signals, patterns, and predictive markers to support mental health research and
+                            personalized care pathways.</p>
+                        <div class="tag-row">
+                            <span class="tag">Signals</span>
+                            <span class="tag">Mental Health</span>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <h3>Health Data Science Infrastructure</h3>
+                        <p>Creating reproducible tools for data preparation, model monitoring, collaborative
+                            experimentation, and academic software practice.</p>
+                        <div class="tag-row">
+                            <span class="tag">Data Science</span>
+                            <span class="tag">GitHub</span>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <h3>AI Education in Medicine</h3>
+                        <p>Designing workshops and learning material for medical AI literacy, applied machine learning,
+                            and interdisciplinary collaboration.</p>
+                        <div class="tag-row">
+                            <span class="tag">Education</span>
+                            <span class="tag">Summer School</span>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <h3>Responsible AI Translation</h3>
+                        <p>Focusing on ethical, transparent, and clinically validated movement from research prototype
+                            to real-world healthcare impact.</p>
+                        <div class="tag-row">
+                            <span class="tag">Ethics</span>
+                            <span class="tag">Translation</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="publications" class="page" aria-labelledby="publications-title">
+            <div class="container">
+                <div class="section-head">
+                    <p class="eyebrow">Publication</p>
+                    <h2 id="publications-title">Selected Publications</h2>
+                    <p>Use this page for selected entries, research themes, and direct links to external publication
+                        profiles.</p>
+                </div>
+
+                <div class="grid two">
+                    <article class="card">
+                        <h3>External Profiles</h3>
+                        <ul class="clean-list">
+                            <li><a href="https://scholar.google.com/citations?user=1BLypHQAAAAJ&amp;hl=en"
+                                    target="_blank" rel="noopener">Google Scholar profile</a></li>
+                            <li><a href="https://www.linkedin.com/in/faezeh-r-17a0375a/" target="_blank"
+                                    rel="noopener">LinkedIn profile</a></li>
+                        </ul>
+                    </article>
+                    <article class="card">
+                        <h3>Research Areas</h3>
+                        <div class="tag-row">
+                            <span class="tag">AI in Medicine</span>
+                            <span class="tag">Machine Learning</span>
+                            <span class="tag">Health Informatics</span>
+                            <span class="tag">Biomedical Data</span>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="page-band">
+                    <div class="publication-list">
+                        <article class="publication">
+                            <strong>Selected publication title to be added</strong>
+                            <span>Authors, journal or conference, year. Add DOI, abstract, or project connection
+                                here.</span>
+                        </article>
+                        <article class="publication">
+                            <strong>AI in medicine publication to be added</strong>
+                            <span>Use this card format for readable publication entries grouped by theme or year.</span>
+                        </article>
+                        <article class="publication">
+                            <strong>Clinical validation publication to be added</strong>
+                            <span>Placeholder entry for work related to validation, translational AI, or healthcare
+                                decision support.</span>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="events" class="page" aria-labelledby="events-title">
+            <div class="container">
+                <div class="section-head">
+                    <p class="eyebrow">Events and Webinar</p>
+                    <h2 id="events-title">AI in Medicine Events</h2>
+                    <p>Browse laboratory events, webinars, workshops, and upcoming education programs.</p>
+                </div>
+
+                <div class="filters" aria-label="Event filters">
+                    <button class="filter-button active" type="button" data-filter="all">All</button>
+                    <button class="filter-button" type="button" data-filter="upcoming">Upcoming</button>
+                    <button class="filter-button" type="button" data-filter="previous">Previous</button>
+                </div>
+
+                <div class="grid three" id="event-list">
+                    <article class="event-card" data-status="upcoming">
+                        <div class="event-meta">
+                            <span>Upcoming</span>
+                            <span>June 2026</span>
+                        </div>
+                        <h3>AI in Medicine Summer School</h3>
+                        <p>Hands-on program covering clinical AI foundations, model validation, explainability, and
+                            interdisciplinary project work.</p>
+                    </article>
+                    <article class="event-card" data-status="upcoming">
+                        <div class="event-meta">
+                            <span>Upcoming</span>
+                            <span>2026</span>
+                        </div>
+                        <h3>Health Explainable AI Webinar</h3>
+                        <p>A research webinar on transparent AI systems, model interpretation, and clinician-facing
+                            explanations.</p>
+                    </article>
+                    <article class="event-card" data-status="previous">
+                        <div class="event-meta">
+                            <span>Previous</span>
+                            <span>2025</span>
+                        </div>
+                        <h3>AI in Medicine Lab Meeting</h3>
+                        <p>Internal research meeting for project updates, project team planning, and publication
+                            development.</p>
+                    </article>
+                    <article class="event-card" data-status="previous">
+                        <div class="event-meta">
+                            <span>Previous</span>
+                            <span>2025</span>
+                        </div>
+                        <h3>HexAI Podcast Launch Planning</h3>
+                        <p>Planning session for podcast topics, guest invitations, production roles, and publication
+                            schedule.</p>
+                    </article>
+                </div>
+                <p class="empty-state" id="empty-events">No events match this filter yet.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div>
+                <p><strong>Üsküdar University</strong></p>
+                <p>TC Üsküdar University, Altunizade Neighborhood, University Street No: 14, PK:34662 Üsküdar / Istanbul
+                    / Türkiye</p>
+            </div>
+            <div>
+                <p>Email: faezeh.rohani@uskudar.edu.tr</p>
+                <p>© Copyright Üsküdar University + AI in Medicine Innovation Research Laboratory. All Rights Reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const pages = Array.from(document.querySelectorAll(".page"));
+        const navLinks = Array.from(document.querySelectorAll("[data-page-link]"));
+        const menuToggle = document.querySelector(".menu-toggle");
+        const mainNav = document.getElementById("primary-nav");
+        const validPages = new Set(pages.map((page) => page.id));
+
+        function closeMobileMenu() {
+            if (!mainNav || !menuToggle) return;
+            mainNav.classList.remove("open");
+            menuToggle.setAttribute("aria-expanded", "false");
+        }
+
+        function showPage(pageId) {
+            const nextPage = validPages.has(pageId) ? pageId : "home";
+
+            pages.forEach((page) => {
+                page.classList.toggle("active", page.id === nextPage);
+            });
+
+            navLinks.forEach((link) => {
+                const isActive = link.dataset.pageLink === nextPage;
+                link.classList.toggle("active", isActive);
+                if (isActive) {
+                    link.setAttribute("aria-current", "page");
+                } else {
+                    link.removeAttribute("aria-current");
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            closeMobileMenu();
+        }
+
+        if (menuToggle && mainNav) {
+            menuToggle.addEventListener("click", () => {
+                const isOpen = mainNav.classList.toggle("open");
+                menuToggle.setAttribute("aria-expanded", String(isOpen));
+            });
+        }
+
+        window.addEventListener("hashchange", () => {
+            showPage(window.location.hash.replace("#", ""));
+        });
+
+        navLinks.forEach((link) => {
+            link.addEventListener("click", () => {
+                showPage(link.dataset.pageLink);
+            });
+        });
+
+        document.querySelectorAll(".button[href^='#']").forEach((link) => {
+            link.addEventListener("click", () => {
+                showPage(link.getAttribute("href").replace("#", ""));
+            });
+        });
+
+        const filterButtons = Array.from(document.querySelectorAll("[data-filter]"));
+        const eventCards = Array.from(document.querySelectorAll(".event-card"));
+        const emptyEvents = document.getElementById("empty-events");
+
+        filterButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const filter = button.dataset.filter;
+                let visibleCount = 0;
+
+                filterButtons.forEach((item) => item.classList.toggle("active", item === button));
+
+                eventCards.forEach((card) => {
+                    const visible = filter === "all" || card.dataset.status === filter;
+                    card.style.display = visible ? "" : "none";
+                    if (visible) visibleCount += 1;
+                });
+
+                emptyEvents.style.display = visibleCount ? "none" : "block";
+            });
+        });
+
+        showPage(window.location.hash.replace("#", ""));
+    </script>
+</body>
+
+</html>
